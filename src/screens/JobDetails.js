@@ -2,6 +2,7 @@ import React from 'react';
 import {View, ScrollView, Text, StyleSheet, Dimensions} from 'react-native';
 import colors from '../styles/colors';
 import JobTypeIcon from '../components/JobTypeIcon/JobTypeIcon';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const {width} = Dimensions.get('window');
 
@@ -73,8 +74,49 @@ export default function JobDetails({route}) {
     ));
   };
 
+  const highestHourlyRate = getUniqueRates(job.available_shifts).sort(
+    (a, b) => b.hourly_pay_in_eur - a.hourly_pay_in_eur,
+  )[0];
+
   return (
     <ScrollView>
+      <Section>
+        <View style={{flexDirection: 'row', marginBottom: 20}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+            <Icon
+              name="ios-calendar-outline"
+              size={22}
+              color="{colors.textGrey}"
+            />
+            <Text style={[styles.textBoldSmall, {marginLeft: 5}]}>
+              {job.available_shifts.length} shifts
+            </Text>
+          </View>
+
+          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+            <Icon name="wallet-outline" size={22} color="{colors.textGrey}" />
+            <Text style={[styles.textBoldSmall, {marginLeft: 5}]}>
+              {highestHourlyRate.hourly_pay_in_eur} €/hour
+            </Text>
+          </View>
+        </View>
+        <View style={{flexDirection: 'row'}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+            <Icon name="laptop-outline" size={22} color="{colors.textGrey}" />
+            <Text style={[styles.textBoldSmall, {marginLeft: 5}]}>
+              Carestream
+            </Text>
+          </View>
+
+          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+            <Icon name="home-outline" size={22} color="{colors.textGrey}" />
+            <Text style={[styles.textBoldSmall, {marginLeft: 5}]}>
+              {job.distance_in_km} km
+            </Text>
+          </View>
+        </View>
+      </Section>
+      <Separator />
       <Section title="Tasks">
         <Text style={styles.descriptionText}>{job.tasks}</Text>
       </Section>
@@ -124,6 +166,11 @@ const styles = StyleSheet.create({
   textBold: {
     color: colors.textGreyLight,
     fontWeight: 'bold',
+  },
+  textBoldSmall: {
+    color: colors.textGrey,
+    fontWeight: 'bold',
+    fontSize: 11,
   },
   captionText: {
     color: colors.textGreyLight,
