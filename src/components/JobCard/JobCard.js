@@ -35,11 +35,7 @@ export default function JobCard({onPress, job}) {
             source={{uri: job.background_image}}
             style={styles.headerImage}>
             <LinearGradient
-              colors={[
-                'rgba(0, 0, 0, 0.1)',
-                'rgba(0, 0, 0, 0.2)',
-                'rgba(0, 0, 0, 1)',
-              ]}
+              colors={['rgba(0, 0, 0, 0.1)', 'rgba(0, 0, 0, 1)']}
               style={[styles.headerImage, {padding: 20}]}>
               <Logo size={35} image={job.logo} />
               <Icon name="heart-outlined" size={35} color="white" />
@@ -97,7 +93,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     flexDirection: 'column',
-    borderRadius: 10,
+    borderRadius: 3,
     height: 300,
     width: width - 70,
     overflow: 'hidden',

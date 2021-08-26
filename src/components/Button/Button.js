@@ -29,7 +29,7 @@ export default function Button({
   });
 
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       {icon && <Icon name={icon} size={14} color={textColor} />}
       <Text style={styles.text}>{text}</Text>
     </TouchableOpacity>
