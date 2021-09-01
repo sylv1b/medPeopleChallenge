@@ -1,0 +1,7 @@
+{
+    "java.configuration.updateBuildConfiguration": "disabled",
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
+}

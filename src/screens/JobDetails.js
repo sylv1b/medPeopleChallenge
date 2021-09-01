@@ -1,15 +1,17 @@
 import React from 'react';
-import {View, ScrollView, Text, StyleSheet, Dimensions} from 'react-native';
+import { View, ScrollView, Text, StyleSheet, Dimensions } from 'react-native';
 import colors from '../styles/colors';
 import JobTypeIcon from '../components/JobTypeIcon/JobTypeIcon';
 import Icon from 'react-native-vector-icons/Ionicons';
+import FakeBottomNavigator from '../components/FakeBottomNavigator/FakeBottomNavigator';
+import Button from '../components/Button/Button';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-export default function JobDetails({route}) {
-  const {job} = route.params;
+export default function JobDetails({ route }) {
+  const { job } = route.params;
 
-  const Section = ({title, children}) => (
+  const Section = ({ title, children }) => (
     <View style={styles.sectionContainer}>
       {title && <Text style={styles.sectionTitle}>{title}</Text>}
       {children}
@@ -47,12 +49,12 @@ export default function JobDetails({route}) {
     )}`;
   };
 
-  const SalaryDetails = ({shifts}) => {
+  const SalaryDetails = ({ shifts }) => {
     const uniqueRates = getUniqueRates(shifts);
     return uniqueRates.map((rate, index) => (
       <View
         key={rate.type + index + rate.hourly_pay_in_eur}
-        style={{marginTop: 15}}>
+        style={{ marginTop: 15 }}>
         <View
           style={{
             flexDirection: 'row',
@@ -60,7 +62,7 @@ export default function JobDetails({route}) {
             marginBottom: 5,
             alignItems: 'center',
           }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <JobTypeIcon type={rate.type} />
             <Text style={styles.text}>{rate.time}</Text>
           </View>
@@ -78,71 +80,107 @@ export default function JobDetails({route}) {
     (a, b) => b.hourly_pay_in_eur - a.hourly_pay_in_eur,
   )[0];
 
+  const highestDayIncome = shifts => {
+    let highetsIncome = 0;
+    shifts.forEach(shift => {
+      const { hourly_pay_in_eur, number_of_hours } = shift;
+      const salary = parseInt(hourly_pay_in_eur) * parseInt(number_of_hours)
+      if (salary > highetsIncome) {
+        highetsIncome = salary
+      }
+    })
+    return highetsIncome;
+  }
+
   return (
-    <ScrollView>
-      <Section>
-        <View style={{flexDirection: 'row', marginBottom: 20}}>
-          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+    <View>
+      <ScrollView>
+        <Section>
+          <View style={{ flexDirection: 'row', marginBottom: 20 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+              <Icon
+                name="ios-calendar-outline"
+                size={22}
+                color={colors.textGrey}
+              />
+              <Text style={[styles.textBoldSmall, { marginLeft: 5 }]}>
+                {job.available_shifts.length} shifts
+              </Text>
+            </View>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+              <Icon name="wallet-outline" size={22} color="{colors.textGrey}" />
+              <Text style={[styles.textBoldSmall, { marginLeft: 5 }]}>
+                {highestHourlyRate.hourly_pay_in_eur} €/hour
+              </Text>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+              <Icon name="laptop-outline" size={22} color="{colors.textGrey}" />
+              <Text style={[styles.textBoldSmall, { marginLeft: 5 }]}>
+                Carestream
+              </Text>
+            </View>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+              <Icon name="home-outline" size={22} color="{colors.textGrey}" />
+              <Text style={[styles.textBoldSmall, { marginLeft: 5 }]}>
+                {job.distance_in_km} km
+              </Text>
+            </View>
+          </View>
+        </Section>
+        <Separator />
+        <Section title="Tasks">
+          <Text style={styles.descriptionText}>{job.tasks}</Text>
+        </Section>
+        <Separator />
+        <Section title="Qualifications">
+          <Text style={styles.descriptionText}>{job.qualifications}</Text>
+        </Section>
+        <Separator />
+        <Section title="Salary and working hours">
+          <Text style={styles.descriptionText}>
+            The hourly rate may vary if the need is urgent or falls on red days.
+          </Text>
+          <SalaryDetails shifts={job.available_shifts} />
+        </Section>
+        <Separator />
+        <Section title={`About ${job.employer_name}`}>
+          <Text style={styles.descriptionText}>{job.employer_description}</Text>
+          <View style={styles.map}>
+            <View style={styles.location} />
+          </View>
+          <Text style={styles.text}>{job.address.street}</Text>
+          <Text style={styles.text}>
+            {job.address.postal_code} {job.address.city}
+          </Text>
+        </Section>
+      </ScrollView>
+      <FakeBottomNavigator>
+        <View style={{ paddingHorizontal: 20, flexDirection: 'row', justifyContent: 'space-between', height: '100%', alignItems: 'center', }}>
+          <View style={{ height: '100%', alignItems: 'center', flexDirection: 'row' }}>
             <Icon
               name="ios-calendar-outline"
               size={22}
               color="{colors.textGrey}"
             />
-            <Text style={[styles.textBoldSmall, {marginLeft: 5}]}>
-              {job.available_shifts.length} shifts
-            </Text>
-          </View>
+            <View style={{ marginLeft: 5 }}>
+              <Text style={styles.textBoldSmall}>Earn up to {highestDayIncome(job.available_shifts)} per day</Text>
+              <Text style={styles.captionTextTwo}>Choose from {job.available_shifts.length} passes</Text>
+            </View>
 
-          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
-            <Icon name="wallet-outline" size={22} color="{colors.textGrey}" />
-            <Text style={[styles.textBoldSmall, {marginLeft: 5}]}>
-              {highestHourlyRate.hourly_pay_in_eur} €/hour
-            </Text>
           </View>
+          <Button
+            text="VIEW SHIFTS"
+            backgroundColor="#6bc2a9"
+            textColor="white"
+          // onPress={() => onPressButtons()}
+          />
         </View>
-        <View style={{flexDirection: 'row'}}>
-          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
-            <Icon name="laptop-outline" size={22} color="{colors.textGrey}" />
-            <Text style={[styles.textBoldSmall, {marginLeft: 5}]}>
-              Carestream
-            </Text>
-          </View>
-
-          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
-            <Icon name="home-outline" size={22} color="{colors.textGrey}" />
-            <Text style={[styles.textBoldSmall, {marginLeft: 5}]}>
-              {job.distance_in_km} km
-            </Text>
-          </View>
-        </View>
-      </Section>
-      <Separator />
-      <Section title="Tasks">
-        <Text style={styles.descriptionText}>{job.tasks}</Text>
-      </Section>
-      <Separator />
-      <Section title="Qualifications">
-        <Text style={styles.descriptionText}>{job.qualifications}</Text>
-      </Section>
-      <Separator />
-      <Section title="Salary and working hours">
-        <Text style={styles.descriptionText}>
-          The hourly rate may vary if the need is urgent or falls on red days.
-        </Text>
-        <SalaryDetails shifts={job.available_shifts} />
-      </Section>
-      <Separator />
-      <Section title={`About ${job.employer_name}`}>
-        <Text style={styles.descriptionText}>{job.employer_description}</Text>
-        <View style={styles.map}>
-          <View style={styles.location} />
-        </View>
-        <Text style={styles.text}>{job.address.street}</Text>
-        <Text style={styles.text}>
-          {job.address.postal_code} {job.address.city}
-        </Text>
-      </Section>
-    </ScrollView>
+      </FakeBottomNavigator>
+    </View>
   );
 }
 
@@ -176,6 +214,10 @@ const styles = StyleSheet.create({
     color: colors.textGreyLight,
     fontSize: 10,
     textAlign: 'right',
+  },
+  captionTextTwo: {
+    color: colors.textGreyLight,
+    fontSize: 10,
   },
   separator: {
     height: 1,
